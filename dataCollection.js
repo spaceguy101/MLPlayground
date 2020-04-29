@@ -20,54 +20,54 @@ let poseLabel = "";
 
 let state = 'waiting';
 let stateP = null;
+let lablesLog;
 let targetLabel;
 
-async function keyPressed() {
-  if (key == 's') {
-    brain.saveData();
-  } else {
+let saveButton;
+let addLabelButton;
+let inputLabel;
+let dataSet = {
 
-    if (key == 'u') {
-      targetLabel = 'Squats_Up'
-    } else if (key == 'd') {
-      targetLabel = 'Squats_Down'
-    } else {
-      return;
-    }
-
-    stateP.html('Starting to Collect Data in 5 Secs .')
-    await delay(1000);
-    stateP.html('Starting to Collect Data in 4 Secs .')
-    await delay(1000);
-    stateP.html('Starting to Collect Data in 3 Secs .')
-    await delay(1000);
-    stateP.html('Starting to Collect Data in 2 Secs .')
-    await delay(1000);
-    stateP.html('Starting to Collect Data in 1 Secs .')
-    await delay(1000);
+};
 
 
+async function addLabel(_targetLabel) {
 
-    stateP.html('Collecting Data for ' + targetLabel)
-    console.log('collecting');
-    state = 'collecting';
+  targetLabel = _targetLabel
 
-    //stateP.html('Collecting Data for ' + targetLabel + ' 5 secs')
-    //await delay(1000);
-    //stateP.html('Collecting Data for ' + targetLabel + ' 4 secs')
-    //await delay(1000);
-    stateP.html('Collecting Data for ' + targetLabel + ' 3 secs')
-    await delay(1000);
-    stateP.html('Collecting Data for ' + targetLabel + ' 2 secs')
-    await delay(1000);
-    stateP.html('Collecting Data for ' + targetLabel + ' 1 secs')
-    await delay(1000);
-    stateP.html('Done Collecting Data for ' + targetLabel)
+  stateP.html('Starting to Collect Data in 5 Secs .')
+  await delay(1000);
+  stateP.html('Starting to Collect Data in 4 Secs .')
+  await delay(1000);
+  stateP.html('Starting to Collect Data in 3 Secs .')
+  await delay(1000);
+  stateP.html('Starting to Collect Data in 2 Secs .')
+  await delay(1000);
+  stateP.html('Starting to Collect Data in 1 Secs .')
+  await delay(1000);
 
-    console.log('not collecting');
-    state = 'waiting';
 
-  }
+
+  stateP.html('Collecting Data for ' + targetLabel)
+  console.log('collecting');
+  state = 'collecting';
+
+  //stateP.html('Collecting Data for ' + targetLabel + ' 5 secs')
+  //await delay(1000);
+  //stateP.html('Collecting Data for ' + targetLabel + ' 4 secs')
+  //await delay(1000);
+  stateP.html('Collecting Data for ' + targetLabel + ' 3 secs')
+  await delay(1000);
+  stateP.html('Collecting Data for ' + targetLabel + ' 2 secs')
+  await delay(1000);
+  stateP.html('Collecting Data for ' + targetLabel + ' 1 secs')
+  await delay(1000);
+  stateP.html('Done Collecting Data for ' + targetLabel)
+
+  console.log('not collecting');
+  state = 'waiting';
+
+
 }
 
 function setup() {
@@ -87,6 +87,33 @@ function setup() {
 
   stateP = createP();
   stateP.style('font-size', '30px');
+
+
+
+
+  inputLabel = createInput();
+  inputLabel.attribute('class', 'form-control');
+  inputLabel.attribute('placeholder', 'Write Label Here');
+
+
+  addLabelButton = createButton('Add label');
+  addLabelButton.attribute('class', 'btn btn-primary');
+
+  addLabelButton.mousePressed(async function () {
+    await addLabel(inputLabel.value());
+  });
+
+
+  saveButton = createButton('Save Data');
+  saveButton.attribute('class', 'btn btn-primary');
+  saveButton.mousePressed(function () {
+    brain.saveData();
+  });
+
+
+  lablesLog = createP('No Labels');
+  lablesLog.style('font-size', '30px');
+
 }
 
 
@@ -106,6 +133,7 @@ function gotPoses(poses) {
       }
       let target = [targetLabel];
       brain.addData(inputs, target);
+      logLabel(targetLabel)
     }
 
   }
@@ -147,4 +175,13 @@ function draw() {
   textSize(512);
   textAlign(CENTER, CENTER);
   text(poseLabel, width / 2, height / 2);
+}
+
+function logLabel(label) {
+  if (dataSet.hasOwnProperty(label)) {
+    dataSet[label]++;
+  } else {
+    dataSet[label] = 1;
+  }
+  lablesLog.html(JSON.stringify(dataSet));
 }

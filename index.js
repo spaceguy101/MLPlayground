@@ -44,7 +44,6 @@ function setup() {
 }
 
 function brainLoaded() {
-  console.log('pose classification ready!');
   classifyPose();
 }
 
@@ -67,9 +66,10 @@ function gotResult(error, results) {
 
   if (results[0].confidence > 0.75) {
     poseLabel = results[0].label.toUpperCase();
+    labelP.html(poseLabel)
   }
   //console.log(results[0].confidence);
-  classifyPose();
+  setTimeout(classifyPose, 100);
 }
 
 
@@ -84,9 +84,7 @@ function gotPoses(poses) {
 }
 
 
-function modelLoaded() {
-  console.log('poseNet ready');
-}
+function modelLoaded() { }
 
 function draw() {
 
@@ -111,12 +109,8 @@ function draw() {
       ellipse(x, y, 16, 16);
     }
   } else {
-    poseLabel = 'No person found'
+    labelP.html('No person found')
   }
 
 
-  fill(255, 0, 255);
-
-  textSize(60);
-  labelP.html(poseLabel)
 }
