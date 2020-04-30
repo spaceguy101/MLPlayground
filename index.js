@@ -118,8 +118,4 @@ function draw() {
     labelP.html('No person found')
   }
 
-  let fps = frameRate();
-  fill(255);
-  stroke(0);
-  text("FPS: " + fps.toFixed(2), 10, height - 10);
 }
