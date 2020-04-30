@@ -9,6 +9,7 @@
 // 1: Data Collection: https://editor.p5js.org/codingtrain/sketches/kTM0Gm-1q
 // 2: Model Training: https://editor.p5js.org/codingtrain/sketches/-Ywq20rM9
 // 3: Model Deployment: https://editor.p5js.org/codingtrain/sketches/c5sDNr8eM
+p5.disableFriendlyErrors = true; // disables FES
 
 let video;
 let poseNet;
@@ -41,6 +42,9 @@ function setup() {
 
   labelP = createP();
   labelP.style('font-size', '30px');
+
+
+
 }
 
 function brainLoaded() {
@@ -93,6 +97,7 @@ function draw() {
   image(video, 0, 0, video.width, video.height);
 
   if (pose) {
+    /*
     for (let i = 0; i < skeleton.length; i++) {
       let a = skeleton[i][0];
       let b = skeleton[i][1];
@@ -108,9 +113,13 @@ function draw() {
       stroke(255);
       ellipse(x, y, 16, 16);
     }
+    */
   } else {
     labelP.html('No person found')
   }
 
-
+  let fps = frameRate();
+  fill(255);
+  stroke(0);
+  text("FPS: " + fps.toFixed(2), 10, height - 10);
 }

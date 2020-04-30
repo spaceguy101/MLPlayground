@@ -21,7 +21,7 @@ function setup() {
     debug: true
   }
   brain = ml5.neuralNetwork(options);
-  brain.loadData('data.json', dataReady);
+  brain.loadData('data/squats_standing_tooClose-30-4-20.json', dataReady);
 
   p = createP('Dont Click train yet');
   p.style('font-size', '30px');

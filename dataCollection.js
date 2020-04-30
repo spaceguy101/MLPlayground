@@ -35,40 +35,16 @@ async function addLabel(_targetLabel) {
 
   targetLabel = _targetLabel
 
-  stateP.html('Starting to Collect Data in 5 Secs .')
-  await delay(1000);
-  stateP.html('Starting to Collect Data in 4 Secs .')
-  await delay(1000);
-  stateP.html('Starting to Collect Data in 3 Secs .')
-  await delay(1000);
-  stateP.html('Starting to Collect Data in 2 Secs .')
-  await delay(1000);
-  stateP.html('Starting to Collect Data in 1 Secs .')
-  await delay(1000);
+  await startTimer(false, targetLabel, 5);
 
-
-
-  stateP.html('Collecting Data for ' + targetLabel)
   console.log('collecting');
   state = 'collecting';
 
-  //stateP.html('Collecting Data for ' + targetLabel + ' 5 secs')
-  //await delay(1000);
-  //stateP.html('Collecting Data for ' + targetLabel + ' 4 secs')
-  //await delay(1000);
-  stateP.html('Collecting Data for ' + targetLabel + ' 3 secs')
-  await delay(1000);
-  stateP.html('Collecting Data for ' + targetLabel + ' 2 secs')
-  await delay(1000);
-  stateP.html('Collecting Data for ' + targetLabel + ' 1 secs')
-  await delay(1000);
+  await startTimer(true, targetLabel, 3);
   stateP.html('Done Collecting Data for ' + targetLabel)
-
-  console.log('not collecting');
   state = 'waiting';
-
-
 }
+
 
 function setup() {
   createCanvas(640, 480);
@@ -84,7 +60,9 @@ function setup() {
     debug: true
   }
   brain = ml5.neuralNetwork(options);
-
+  brain.loadData('data/squats_standing-30-4-20.json', function () {
+    console.log('squats_standing-30-4-20.json data loaded')
+  })
   stateP = createP();
   stateP.style('font-size', '30px');
 
