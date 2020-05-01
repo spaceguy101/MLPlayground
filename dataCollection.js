@@ -25,13 +25,15 @@ let targetLabel;
 
 let saveButton;
 let addLabelButton;
+let trainButton;
 let inputLabel;
+let inputTime;
 let dataSet = {
 
 };
 
 
-async function addLabel(_targetLabel) {
+async function addLabel(_targetLabel, time) {
 
   targetLabel = _targetLabel
 
@@ -40,14 +42,19 @@ async function addLabel(_targetLabel) {
   console.log('collecting');
   state = 'collecting';
 
-  await startTimer(true, targetLabel, 3);
+  await startTimer(true, targetLabel, time);
   stateP.html('Done Collecting Data for ' + targetLabel)
+  inputLabel.value('')
+  inputTime.value('')
   state = 'waiting';
 }
 
 
 function setup() {
-  createCanvas(640, 480);
+  let canvas = createCanvas(640, 480);
+  canvas.style('margin', 'auto')
+  canvas.parent('sketch-div');
+
   video = createCapture(VIDEO);
   video.hide();
   poseNet = ml5.poseNet(video, modelLoaded);
@@ -63,34 +70,41 @@ function setup() {
   brain.loadData('data/squats_standing-30-4-20.json', function () {
     console.log('squats_standing-30-4-20.json data loaded')
   })
-  stateP = createP();
-  stateP.style('font-size', '30px');
+  stateP = select("#label")
+
+  inputLabel = select("#inputLabel")
+  inputTime = select("#inputTime")
 
 
-
-
-  inputLabel = createInput();
-  inputLabel.attribute('class', 'form-control');
-  inputLabel.attribute('placeholder', 'Write Label Here');
-
-
-  addLabelButton = createButton('Add label');
-  addLabelButton.attribute('class', 'btn btn-primary');
-
+  addLabelButton = select("#addLabelButton");
   addLabelButton.mousePressed(async function () {
-    await addLabel(inputLabel.value());
+    if (!inputLabel.value()) return alert('Please Enter Label')
+    if (!inputTime.value()) return alert('Please Enter Time')
+    await addLabel(inputLabel.value(), parseInt(inputTime.value()));
   });
 
 
-  saveButton = createButton('Save Data');
-  saveButton.attribute('class', 'btn btn-primary');
+  saveButton = select("#saveButton");
+
   saveButton.mousePressed(function () {
     brain.saveData();
   });
 
 
-  lablesLog = createP('No Labels');
-  lablesLog.style('font-size', '30px');
+  lablesLog = select("#labelsData");
+  //lablesLog.parent('data');
+  //lablesLog.style('font-size', '30px');
+
+
+  trainButton = select("#trainButton");
+  trainButton.mousePressed(function () {
+    brain.normalizeData();
+    brain.train({ epochs: 100 }, function () {
+      console.log('model trained');
+      brain.save();
+    });
+  });
+
 
 }
 
@@ -120,7 +134,7 @@ function gotPoses(poses) {
 
 function modelLoaded() {
   console.log('poseNet ready');
-  stateP.html('PoseNet Ready')
+  stateP.html('Posenet is Ready')
 }
 
 function draw() {
@@ -161,5 +175,9 @@ function logLabel(label) {
   } else {
     dataSet[label] = 1;
   }
-  lablesLog.html(JSON.stringify(dataSet));
+  var html = ''
+  for (var propertyName in dataSet) {
+    html = html + `${propertyName} : ${dataSet[propertyName]}`
+  }
+  lablesLog.html(html);
 }

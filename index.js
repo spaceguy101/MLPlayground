@@ -19,8 +19,13 @@ let skeleton;
 let brain;
 let poseLabel = "Label";
 let labelP = null
+
+
 function setup() {
-  createCanvas(640, 480);
+  let canvas = createCanvas(640, 480);
+  canvas.style('margin', 'auto')
+  canvas.parent('sketch-div');
+
   video = createCapture(VIDEO);
   video.hide();
   poseNet = ml5.poseNet(video, modelLoaded);
@@ -40,10 +45,7 @@ function setup() {
   };
   brain.load(modelInfo, brainLoaded);
 
-  labelP = createP();
-  labelP.style('font-size', '30px');
-
-
+  labelP = select('#labelP');
 
 }
 
@@ -68,10 +70,12 @@ function classifyPose() {
 
 function gotResult(error, results) {
 
-  if (results[0].confidence > 0.75) {
-    poseLabel = results[0].label.toUpperCase();
-    labelP.html(poseLabel)
+  var html = '';
+  for (result of results) {
+    html = html + result.label + ':' + result.confidence.toFixed(2) * 100 + "</br>"
   }
+  labelP.html(html)
+
   //console.log(results[0].confidence);
   setTimeout(classifyPose, 100);
 }
